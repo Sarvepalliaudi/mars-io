@@ -158,6 +158,14 @@ function App() {
             capture
             style={{ display: "none" }}
           />
+            <input
+            type="file"
+            id="fileInput"
+            onChange={handleFileChange}
+            accept="image/*"
+
+            style={{ display: "none" }}
+          />
           <label
             className="select"
             htmlFor="fileInput"
