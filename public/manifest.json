@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Mandex - AI",
+  "name": "Mandex-AI: AI-Powered Image Analysis",
+  "description": "Discover Mandex-AI, an advanced application that combines AI-powered image analysis with seamless content generation. Upload images, input prompts, and receive detailed insights, all in a responsive and user-friendly interface. Perfect for developers and AI enthusiasts!",
   "icons": [
     {
       "src": "favicon.ico",

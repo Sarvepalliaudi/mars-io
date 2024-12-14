@@ -86,6 +86,11 @@ function App() {
 
       const renderedOutput = buffer.join("").replace(/<\/?[^>]+(>|$)/g, ""); // Strip HTML tags
       setOutput(renderedOutput);
+
+      // Read the output aloud
+      const synth = window.speechSynthesis;
+      const utterance = new SpeechSynthesisUtterance(renderedOutput);
+      synth.speak(utterance);
     } catch (error) {
       console.error("Error:", error);
       setOutput("An error occurred while generating content.");
@@ -93,7 +98,6 @@ function App() {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="App">
       {/* <div style="width:100%;height:0;padding-bottom:100%;position:relative;">
@@ -151,6 +155,7 @@ function App() {
             id="fileInput"
             onChange={handleFileChange}
             accept="image/*"
+            capture="environment"
             style={{ display: "none" }}
           />
           <label

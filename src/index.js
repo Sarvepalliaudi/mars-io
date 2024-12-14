@@ -8,6 +8,12 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <App />
+    <footer>
+      <a href="https://github.com/JOYBOYash" target="_blank">
+        @joyboySsk,
+      </a>{" "}
+      a passoin project - 2K24{" "}
+    </footer>
   </React.StrictMode>
 );
 
