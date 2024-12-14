@@ -154,6 +154,7 @@ function App() {
             style={{
                 display: "flex",
               alignItems: "center",
+              gap: "10px",
               justifyContent: "center"
             }} 
              >
