@@ -150,9 +150,16 @@ function App() {
               Drag and drop an image file here, or <span>click to select</span>
             </p>
           )}
-          <input
+            <div 
+            style={{
+                display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }} 
+             >
+            <input
             type="file"
-            id="fileInput"
+            id="takePhoto"
             onChange={handleFileChange}
             accept="image/*"
             capture
@@ -181,6 +188,22 @@ function App() {
           >
             Select File
           </label>
+              <label
+            className="select"
+            htmlFor="takePhoto"
+            style={{
+              display: "inline-block",
+              padding: "10px 20px",
+              marginTop: "10px",
+              backgroundColor: " rgb(0, 47, 255)",
+              color: "#fff",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Take Photo
+          </label>
+              </div>
         </div>
         <div className="prompt-box">
           <label>
