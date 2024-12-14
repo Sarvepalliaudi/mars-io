@@ -155,7 +155,7 @@ function App() {
             id="fileInput"
             onChange={handleFileChange}
             accept="image/*"
-            capture="environment"
+            capture
             style={{ display: "none" }}
           />
           <label
