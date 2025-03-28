@@ -1,69 +1,52 @@
-import React, { useState } from "react";
+import React, { useState } from "react"; 
 import {
   GoogleGenerativeAI,
   HarmBlockThreshold,
   HarmCategory,
 } from "@google/generative-ai";
-import { Compass, Loader } from "lucide-react";
+import { Loader, Compass } from "lucide-react";
 import MarkdownIt from "markdown-it";
 
 function App() {
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const [prompt, setPrompt] = useState("");
-  const [output, setOutput] = useState("Results will appear here...");
+  const [mood, setMood] = useState("");
+  const [tropes, setTropes] = useState("");
+  const [numRecommendations, setNumRecommendations] = useState(3);
+  const [recommendations, setRecommendations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    setFile(file);
-    previewFile(file); // Set preview
+  const handleMoodChange = (event) => {
+    setMood(event.target.value);
   };
 
-  const previewFile = (file) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      setPreview(reader.result); // Set preview to Base64 URL
-    };
-    reader.readAsDataURL(file);
+  const handleTropesChange = (event) => {
+    setTropes(event.target.value);
   };
 
-  const handlePromptChange = (event) => {
-    setPrompt(event.target.value);
+  const handleNumRecommendationsChange = (event) => {
+    setNumRecommendations(event.target.value);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    if (!file) {
-      alert("Please select a file.");
+  
+    if (!mood || !tropes) {
+      alert("Please enter both mood and tropes.");
       return;
     }
-
+  
     setIsLoading(true);
-    setOutput("Generating...");
-
+    setRecommendations([]); // Clear previous recommendations
+  
     try {
-      const fileBase64 = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-          const base64String = reader.result.split(",")[1];
-          resolve(base64String);
-        };
-        reader.onerror = reject;
-      });
-
       const contents = [
         {
           role: "user",
           parts: [
-            { inline_data: { mime_type: "image/jpeg", data: fileBase64 } },
-            { text: prompt },
+            { text: `Give me ${numRecommendations} anime recommendations based on the mood '${mood}' and the tropes '${tropes}'. Only return a list of recommendations without any additional text.` },
           ],
         },
       ];
-
+  
       const GEMINI_API_KEY = "AIzaSyDlqSN72rMznHQ_mJFNoKh1Atw4xcWwaVI";
       const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({
@@ -75,176 +58,143 @@ function App() {
           },
         ],
       });
-
+  
       const result = await model.generateContentStream({ contents });
-
+  
       let buffer = [];
       const md = new MarkdownIt();
       for await (let response of result.stream) {
         buffer.push(response.text());
       }
-
-      const renderedOutput = buffer.join("").replace(/<\/?[^>]+(>|$)/g, ""); // Strip HTML tags
-      setOutput(renderedOutput);
-
-      // Read the output aloud
+  
+      const responseText = buffer.join("").replace(/<\/?[^>]+(>|$)/g, ""); // Strip HTML tags
+      const recommendationsArray = responseText.split("\n").filter((item) => item.trim() !== "");
+      setRecommendations(recommendationsArray);
+  
+      // Optionally read the output aloud
       const synth = window.speechSynthesis;
-      const utterance = new SpeechSynthesisUtterance(renderedOutput);
+      const utterance = new SpeechSynthesisUtterance(responseText);
       synth.speak(utterance);
     } catch (error) {
       console.error("Error:", error);
-      setOutput("An error occurred while generating content.");
+      setRecommendations(["An error occurred while generating content."]);
     } finally {
       setIsLoading(false);
     }
   };
+  
+
   return (
-    <div className="App">
-      {/* <div style="width:100%;height:0;padding-bottom:100%;position:relative;">
-        <iframe
-          className="frame"
-          src="https://giphy.com/embed/tVM0hQmU52iKcLI1Kk"
-          width="100%"
-          height="100%"
-          style="position:absolute"
-          frameBorder="0"
-          class="giphy-embed"
-          allowFullScreen
-        ></iframe>
-      </div>
-      <p>
-        <a href="https://giphy.com/gifs/loop-retro-vhs-tVM0hQmU52iKcLI1Kk">
-          via GIPHY
-        </a>
-      </p> */}
-      <h1 className="title">
-        Man<span>dex</span> - AI
+    <div className="anime-app" style={{ backgroundColor: "#121212", color: "#fff", padding: "20px", fontFamily: "'Poppins', sans-serif", minHeight: "100vh" }}>
+      <h1 className="anime-title" style={{ textAlign: "center", fontSize: "3rem", color: "#9a4c95", marginBottom: "30px" }}>
+        Anime Recommender
       </h1>
-      <form onSubmit={handleSubmit}>
-        <div
-          className="image-picker"
+      <form onSubmit={handleSubmit} className="anime-form" style={{ maxWidth: "600px", margin: "0 auto" }}>
+        <div className="anime-input-group" style={{ marginBottom: "20px" }}>
+          <label htmlFor="mood">Mood:</label>
+          <input
+            type="text"
+            id="mood"
+            value={mood}
+            onChange={handleMoodChange}
+            placeholder="Enter your mood (e.g., intense, romantic)"
+            className="anime-input"
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "none",
+              marginTop: "10px",
+              backgroundColor: "#292929",
+              color: "#fff",
+            }}
+          />
+        </div>
+
+        <div className="anime-input-group" style={{ marginBottom: "20px" }}>
+          <label htmlFor="tropes">Favorite Tropes:</label>
+          <input
+            type="text"
+            id="tropes"
+            value={tropes}
+            onChange={handleTropesChange}
+            placeholder="Enter tropes (e.g., action, time travel)"
+            className="anime-input"
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "none",
+              marginTop: "10px",
+              backgroundColor: "#292929",
+              color: "#fff",
+            }}
+          />
+        </div>
+
+        <div className="anime-input-group" style={{ marginBottom: "20px" }}>
+          <label htmlFor="numRecommendations">Number of Recommendations:</label>
+          <input
+            type="number"
+            id="numRecommendations"
+            value={numRecommendations}
+            onChange={handleNumRecommendationsChange}
+            min="1"
+            max="10"
+            className="anime-input"
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "none",
+              marginTop: "10px",
+              backgroundColor: "#292929",
+              color: "#fff",
+            }}
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="anime-button"
           style={{
-            border: "4px dashed rgb(0, 47, 255)",
-            padding: "20px",
-            borderRadius: "10px",
-            backgroundColor: "#222",
+            width: "100%",
+            padding: "12px",
+            backgroundColor: "#9a4c95",
             color: "#fff",
-            textAlign: "center",
+            borderRadius: "8px",
+            border: "none",
+            fontSize: "1.2rem",
             cursor: "pointer",
-            marginBottom: "20px",
           }}
         >
-          {preview ? (
-            <img
-              src={preview}
-              alt="Uploaded Preview"
-              style={{
-                maxWidth: "100%",
-                maxHeight: "300px",
-                borderRadius: "10px",
-                marginBottom: "10px",
-              }}
-            />
-          ) : (
-            <p>
-              Drag and drop an image file here, or <span>click to select</span>
-            </p>
-          )}
-            <div 
-            style={{
-                display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              justifyContent: "center"
-            }} 
-             >
-            <input
-            type="file"
-            id="takePhoto"
-            onChange={handleFileChange}
-            accept="image/*"
-            capture
-            style={{ display: "none" }}
-          />
-            <input
-            type="file"
-            id="fileInput"
-            onChange={handleFileChange}
-            accept="image/*"
-
-            style={{ display: "none" }}
-          />
-          <label
-            className="select"
-            htmlFor="fileInput"
-            style={{
-              display: "inline-block",
-              padding: "10px 20px",
-              marginTop: "10px",
-              backgroundColor: " rgb(0, 47, 255)",
-              color: "#fff",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-          >
-            Select File
-          </label>
-              <label
-            className="select"
-            htmlFor="takePhoto"
-            style={{
-              display: "inline-block",
-              padding: "10px 20px",
-              marginTop: "10px",
-              backgroundColor: " rgb(0, 47, 255)",
-              color: "#fff",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-          >
-            Take Photo
-          </label>
-              </div>
-        </div>
-        <div className="prompt-box">
-          <label>
-            <input
-              className="prompt"
-              name="prompt"
-              placeholder="Ast your question..."
-              type="text"
-              value={prompt}
-              onChange={handlePromptChange}
-            />
-          </label>
-          <button type="submit" disabled={isLoading}>
-            {isLoading ? (
-              <Loader className="loader" width={40} height={40} color="white" />
-            ) : (
-              <Compass
-                className="compass"
-                width={40}
-                height={40}
-                color="white"
-              />
-            )}
-          </button>
-        </div>
+          {isLoading ? <Loader className="anime-loader" width={24} height={24} color="white" /> : <Compass className="anime-compass" width={24} height={24} color="white" />}
+          Get Recommendations
+        </button>
       </form>
-      <pre
-        className="output"
-        style={{
-          marginTop: "20px",
-          whiteSpace: "pre-wrap",
-          padding: "10px",
-          background: "#0a0a0ab7",
-          border: "2px dashed white",
-        }}
-      >
-        {output}
-      </pre>
+
+      <div className="anime-recommendations" style={{ marginTop: "30px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "20px" }}>
+        {recommendations.length > 0 ? (
+          recommendations.map((rec, index) => (
+            <div key={index} className="anime-card" style={{
+              backgroundColor: "#1f1f1f",
+              borderRadius: "12px",
+              padding: "20px",
+              border: "2px solid #9a4c95",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)"
+            }}>
+              <h3 style={{ color: "#ff6f61", fontSize: "1.5rem", marginBottom: "10px" }}>Recommendation {index + 1}</h3>
+              <p style={{ fontSize: "1.1rem", color: "#d4d4d4" }}>{rec}</p>
+            </div>
+          ))
+        ) : (
+          !isLoading && <p>No recommendations yet. Fill out the form and submit!</p>
+        )}
+      </div>
     </div>
   );
 }
 
 export default App;
+
