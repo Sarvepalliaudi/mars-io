@@ -1,5 +1,5 @@
 # Mars IO - Mentality-Based Anime Recommendation System
-https://mars-4j5khpw28-audi-siva-bhanuvardhans-projects.vercel.app/
+https://mars-io.vercel.app/
 
 ## Overview
 **Mars IO** is an AI-powered system designed to recommend anime based on a user's current mental state. In a world full of emotional ups and downs, Mars IO acts as a supportive tool, suggesting anime that resonates with your feelings, reduces stress, and boosts motivation.
