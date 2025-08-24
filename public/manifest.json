@@ -1,0 +1,26 @@
+{
+  "short_name": "Mandex - AI",
+  "name": "Mandex-AI: AI-Powered Image Analysis",
+  "description": "Discover Mandex-AI, an advanced application that combines AI-powered image analysis with seamless content generation. Upload images, input prompts, and receive detailed insights, all in a responsive and user-friendly interface. Perfect for developers and AI enthusiasts!",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
