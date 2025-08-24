@@ -11,15 +11,15 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@google-ai/generativelanguage": "^2.8.0",
     "@google/generative-ai": "^0.24.0",
     "axios": "^1.8.4",
-    "dotenv": "^16.4.7",
+    "cra-template": "1.2.0",
+    "dotenv": "^16.6.1",
+    "lucide-react": "^0.468.0",
     "next": "15.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@google-ai/generativelanguage": "^2.8.0",
-    "cra-template": "1.2.0",
-    "lucide-react": "^0.468.0",
     "react-markdown-it": "^1.0.2",
     "react-scripts": "5.0.1",
     "web-vitals": "^4.2.4"
