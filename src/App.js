@@ -47,7 +47,7 @@ function App() {
         },
       ];
   
-      const GEMINI_API_KEY = "AIzaSyDlqSN72rMznHQ_mJFNoKh1Atw4xcWwaVI";
+      const GEMINI_API_KEY = "AIzaSyA8CNCGstGOW52XkIpB1oYkIP-JG9ATZaI";
       const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({
         model: "gemini-1.5-flash",
